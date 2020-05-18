@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter.messagebox
 from pygame import mixer
 
 mixer.init()
@@ -19,6 +20,10 @@ def set_vol(val):
     mixer.music.set_volume(volume)
 
 
+def about_us():
+    tkinter.messagebox.showinfo('About Us', 'This is the simple Media Player using Python Tkinter made by @surajgotamey')
+
+
 window = Tk()  # Creates a window
 window.title("Music Player")
 window.iconbitmap(r'Photos\MPicon.ico')  # r stands for Random String
@@ -30,11 +35,11 @@ window.config(menu=menubar)
 submenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="File", menu=submenu)
 submenu.add_command(label="Open")
-submenu.add_command(label="Exit")
+submenu.add_command(label="Exit", command=window.destroy)
 
 submenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Help", menu=submenu)
-submenu.add_command(label="About Us")
+submenu.add_command(label="About Us", command=about_us)
 
 text = Label(window, text="Let's make some noise!")
 text.pack()  # pack the label so that it could be appear in the window.
