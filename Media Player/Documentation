@@ -3,3 +3,9 @@
 3) something.pack - makes the label so that it could be appear in the window.
 4) pygame module is so big one. So, its better to import mixer from pygame to use it.
 5) mixer.init() - to initialize mixer
+6) Scale - indicates anything that can go from - to --
+7) something.set(-) - to set the default value of the thing to be -.
+8) something.config(menu=-) - to make sure that '-' must be at top of the window and it is going to have submenus in it.
+9) something.add_cascade(label=-) - to figure out that '-' is submenu of the menu.
+10) something.add_command(label=-) - to figure out that '-' is cascades of the submenu[x]
+11) tearoff=0 - makes sure that it removes the unneccesary dashes of the cascades of submenu.

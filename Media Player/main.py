@@ -24,6 +24,18 @@ window.title("Music Player")
 window.iconbitmap(r'Photos\MPicon.ico')  # r stands for Random String
 window.geometry('300x300')
 
+menubar = Menu(window)
+window.config(menu=menubar)
+
+submenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="File", menu=submenu)
+submenu.add_command(label="Open")
+submenu.add_command(label="Exit")
+
+submenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=submenu)
+submenu.add_command(label="About Us")
+
 text = Label(window, text="Let's make some noise!")
 text.pack()  # pack the label so that it could be appear in the window.
 
@@ -37,6 +49,7 @@ stopButton.pack()
 
 vol_scale = Scale(window, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
 vol_scale.set(4)
+set_vol(4)
 vol_scale.pack()
 
 window.mainloop()  # Displays the window
