@@ -1,8 +1,13 @@
 from tkinter import *
-pygame
+from pygame import mixer
+
+mixer.init()
+
 
 def play_btn():
-    print("Congrats Goru, its working.")
+    mixer.music.load("Laakhau Hajarau.mp3")
+    mixer.music.play()
+    # print("Congrats Goru, its working.")
 
 
 window = Tk()  # Creates a window
