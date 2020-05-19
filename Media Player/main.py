@@ -13,23 +13,27 @@ def browse_file():
 
 
 def play_btn():
-    try:
-        paused
-    except NameError:
+    global paused
+
+    if paused:
+        mixer.music.unpause()
+        statusBar['text'] = "Music Resumed"
+        paused = FALSE
+    else:
         try:
             mixer.music.load('Laakhau Hajarau.mp3')
             mixer.music.play()
             statusBar['text'] = "Playing Music" + ' - ' + os.path.basename('Laakhau Hajarau.mp3')
         except:
             tkinter.messagebox.showerror('File not found', 'Please select the music first to make me play')
-    else:
-        mixer.music.unpause()
-        statusBar['text'] = "Music Resumed"
 
 
 def stop_btn():
     mixer.music.stop()
     statusBar['text'] = "Music Stopped"
+
+
+paused = FALSE
 
 
 def pause_btn():
@@ -40,8 +44,33 @@ def pause_btn():
 
 
 def set_vol(val):
+    # global volume
     volume = int(val) / 100
-    mixer.music.set_volume(volume)
+    new_volume = mixer.music.set_volume(volume)
+    return new_volume
+
+
+def rewind_btn():
+    play_btn()
+    statusBar['text'] = "Music Rewinded"
+
+
+muted = FALSE
+
+
+def mute_btn():
+    global muted
+    if muted:
+        volume_button.configure(image=photo5)
+        set_vol(0.04)
+        vol_scale.set(4)
+        muted = FALSE
+
+    else:
+        volume_button.configure(image=photo4)
+        set_vol(0)
+        vol_scale.set(0)
+        muted = TRUE
 
 
 def about_us():
@@ -50,7 +79,7 @@ def about_us():
 
 window = Tk()  # Creates a window
 window.title("Music Player")
-window.iconbitmap(r'Photos\MPicon.ico')  # r stands for Random String
+window.iconbitmap(r'')  # r stands for Random String
 window.geometry('400x400')
 
 menubar = Menu(window)
@@ -71,27 +100,39 @@ text.pack()  # pack the label so that it could be appear in the window.
 mFrame = Frame(window)
 mFrame.pack(padx=10, pady=10)
 
-photo = PhotoImage(file='Photos\play.png')
+photo = PhotoImage(file='Photos/play.png')
 playButton = Button(mFrame, image=photo, command=play_btn)
-playButton.pack(side=LEFT, padx=10)
+playButton.grid(row=0, column=0, padx=10)
 
-photo1 = PhotoImage(file='Photos\stop.png')
+photo1 = PhotoImage(file='Photos/stop.png')
 stopButton = Button(mFrame, image=photo1, command=stop_btn)
-stopButton.pack(side=LEFT, padx=10)
+stopButton.grid(row=0, column=1, padx=10)
 
-photo2 = PhotoImage(file='Photos\pause.png')
+photo2 = PhotoImage(file='Photos/pause.png')
 pauseButton = Button(mFrame, image=photo2, command=pause_btn)
-pauseButton.pack(side=LEFT, padx=10)
+pauseButton.grid(row=0, column=2, padx=10)
 
+bFrame = Frame(window)
+bFrame.pack(padx=10, pady=10)
 
-vol_scale = Scale(window, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
+photo3 = PhotoImage(file='Photos/playagain.png')
+rewindButton = Button(bFrame, image=photo3, command=rewind_btn)
+rewindButton.grid(row=0, column=0, padx=20)
+
+photo4 = PhotoImage(file='Photos/mute.png')
+# muteButton = Button(bFrame, image=photo4, command=rewind_btn)
+# muteButton.grid(row=0, column=0)
+
+photo5 = PhotoImage(file='Photos/loud.png')
+volume_button = Button(bFrame, image=photo5, command=mute_btn)
+volume_button.grid(row=0, column=1)
+
+vol_scale = Scale(bFrame, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
 vol_scale.set(4)
 set_vol(4)
-vol_scale.pack(pady=15)
+vol_scale.grid(row=0, column=2)
 
 statusBar = Label(window, text="Welcome to My Music Player", relief=SUNKEN, anchor=W)
 statusBar.pack(side=BOTTOM, fill=X)
 
 window.mainloop()  # Displays the window
-
-
