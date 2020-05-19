@@ -3,14 +3,21 @@ import threading
 import time
 import tkinter.messagebox
 from tkinter import *
+from tkinter import ttk
+from ttkthemes import themed_tk as tk
 from tkinter import filedialog
 
 from mutagen.mp3 import MP3
 from pygame import mixer
 
-window = Tk()  # Creates a window
+# To know and use different themes of ttkthemes in tkinter, go and click the link below:
+# https://www.github.com/RedFantom/ttkthemes/wiki/Usage
 
-statusBar = Label(window, text="Welcome to My Music Player", relief=SUNKEN, anchor=W)
+window = tk.ThemedTk()  # Creates a window
+window.get_themes()
+window.set_theme('breeze')
+
+statusBar = Label(window, text="Welcome to My Music Player", relief=SUNKEN, anchor=W, font='Times 10 italic')
 statusBar.pack(side=BOTTOM, fill=X)
 
 mixer.init()
@@ -47,16 +54,16 @@ submenu.add_command(label="Open", command=browse_file)
 submenu.add_command(label="Exit", command=window.destroy)
 
 
-def show_details():
+def show_details(play_music):
     # file_label['text'] = "Playing " + os.path.basename(filename)
 
-    file_data = os.path.splitext(filename_path)
+    file_data = os.path.splitext(play_music)
 
     if file_data[1] == '.mp3':
-        audio = MP3(filename_path)
+        audio = MP3(play_music)
         total_length = audio.info.length
     else:
-        a = mixer.Sound(filename_path)
+        a = mixer.Sound(play_music)
         total_length = a.get_length()
 
     # div - total_length/60, mod - total_length % 60
@@ -87,38 +94,9 @@ def start_count(t):
             ct += 1
 
 
-def play_btn():
-    global paused, stopped
-
-    if paused:
-        mixer.music.unpause()
-        statusBar['text'] = "Music Resumed"
-        paused = FALSE
-    elif stopped:
-        mixer.music.play()
-        statusBar['text'] = "Playing Music" + ' - ' + os.path.basename(filename_path)
-        stopped = FALSE
-    else:
-        try:
-            selected_song = list_box1.curselection()
-            selected_song = int(selected_song[0])
-            play_it = playlist[selected_song]
-            mixer.music.load(play_it)
-            mixer.music.play()
-            # statusBar['text'] = "Playing Music" + ' - ' + os.path.basename(filename_path)
-            # show_details()
-        except:
-            tkinter.messagebox.showerror('File not found', 'Please select the music first to make me play')
-
-
-stopped = FALSE
-
-
 def stop_btn():
-    global stopped
     mixer.music.stop()
     statusBar['text'] = "Music Stopped"
-    stopped = TRUE
 
 
 paused = FALSE
@@ -131,11 +109,39 @@ def pause_btn():
     statusBar['text'] = "Music Paused"
 
 
+def play_btn():
+    global paused
+
+    if paused:
+        mixer.music.unpause()
+        statusBar['text'] = "Music Resumed"
+        paused = FALSE
+    else:
+        try:
+            stop_btn()
+            time.sleep(1)
+            selected_song = list_box1.curselection()
+            selected_song = int(selected_song[0])
+            play_it = playlist[selected_song]
+            mixer.music.load(play_it)
+            mixer.music.play()
+            statusBar['text'] = "Playing Music" + ' - ' + os.path.basename(play_it)
+            show_details(play_it)
+        except:
+            tkinter.messagebox.showerror('File not found', 'Please select the music first to make me play')
+
+
 def set_vol(val):
     # global volume
-    volume = int(val) / 100
-    new_volume = mixer.music.set_volume(volume)
-    return new_volume
+    volume = float(val) / 100
+    mixer.music.set_volume(volume)
+
+
+def del_btn():
+    selected_song = list_box1.curselection()
+    selected_song = int(selected_song[0])
+    list_box1.delete(selected_song)
+    playlist.pop(selected_song)
 
 
 def rewind_btn():
@@ -150,8 +156,8 @@ def mute_btn():
     global muted
     if muted:
         volume_button.configure(image=photo5)
-        set_vol(0.04)
-        vol_scale.set(4)
+        set_vol(0.1)
+        vol_scale.set(10)
         muted = FALSE
 
     else:
@@ -180,43 +186,43 @@ left_frame.pack(side=LEFT, padx=30, pady=20)
 list_box1 = Listbox(left_frame)
 list_box1.pack()
 
-add = Button(left_frame, text="+ Add", command=browse_file)
+add = ttk.Button(left_frame, text="+ Add", command=browse_file)
 add.pack(side=LEFT)
-delete = Button(left_frame, text="- Del")
+delete = ttk.Button(left_frame, text="- Del", command=del_btn)
 delete.pack(side=LEFT)
 
 right_frame = Frame(window)
-right_frame.pack(pady=20)
+right_frame.pack()
 
 top_frame = Frame(right_frame)
-top_frame.pack()
+top_frame.pack(pady=10)
 
-time_label = Label(top_frame, text="Total Time: --:--")
+time_label = ttk.Label(top_frame, text="Total Time: --:--")
 time_label.pack()
 
-current_label = Label(top_frame, text="Current Time: --:--", relief=GROOVE)
-current_label.pack()
+current_label = ttk.Label(top_frame, text="Current Time: --:--", relief=GROOVE)
+current_label.pack(pady=10)
 
 mFrame = Frame(right_frame)
-mFrame.pack(padx=10, pady=10)
+mFrame.pack(pady=30)
 
 photo = PhotoImage(file='Photos/play.png')
-playButton = Button(mFrame, image=photo, command=play_btn)
+playButton = ttk.Button(mFrame, image=photo, command=play_btn)
 playButton.grid(row=0, column=0, padx=10)
 
 photo1 = PhotoImage(file='Photos/stop.png')
-stopButton = Button(mFrame, image=photo1, command=stop_btn)
+stopButton = ttk.Button(mFrame, image=photo1, command=stop_btn)
 stopButton.grid(row=0, column=1, padx=10)
 
 photo2 = PhotoImage(file='Photos/pause.png')
-pauseButton = Button(mFrame, image=photo2, command=pause_btn)
+pauseButton = ttk.Button(mFrame, image=photo2, command=pause_btn)
 pauseButton.grid(row=0, column=2, padx=10)
 
 bFrame = Frame(right_frame)
 bFrame.pack(padx=10, pady=10)
 
 photo3 = PhotoImage(file='Photos/playagain.png')
-rewindButton = Button(bFrame, image=photo3, command=rewind_btn)
+rewindButton = ttk.Button(bFrame, image=photo3, command=rewind_btn)
 rewindButton.grid(row=0, column=0, padx=20)
 
 photo4 = PhotoImage(file='Photos/mute.png')
@@ -224,12 +230,12 @@ photo4 = PhotoImage(file='Photos/mute.png')
 # muteButton.grid(row=0, column=0)
 
 photo5 = PhotoImage(file='Photos/loud.png')
-volume_button = Button(bFrame, image=photo5, command=mute_btn)
+volume_button = ttk.Button(bFrame, image=photo5, command=mute_btn)
 volume_button.grid(row=0, column=1)
 
-vol_scale = Scale(bFrame, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
-vol_scale.set(4)
-set_vol(4)
+vol_scale = ttk.Scale(bFrame, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
+vol_scale.set(10)
+set_vol(10)
 vol_scale.grid(row=0, column=2)
 
 
