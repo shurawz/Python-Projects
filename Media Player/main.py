@@ -68,23 +68,26 @@ submenu.add_command(label="About Us", command=about_us)
 text = Label(window, text="Let's make some noise!")
 text.pack()  # pack the label so that it could be appear in the window.
 
+mFrame = Frame(window)
+mFrame.pack(padx=10, pady=10)
+
 photo = PhotoImage(file='Photos\play.png')
-playButton = Button(window, image=photo, command=play_btn)
-playButton.pack()
+playButton = Button(mFrame, image=photo, command=play_btn)
+playButton.pack(side=LEFT, padx=10)
 
 photo1 = PhotoImage(file='Photos\stop.png')
-stopButton = Button(window, image=photo1, command=stop_btn)
-stopButton.pack()
+stopButton = Button(mFrame, image=photo1, command=stop_btn)
+stopButton.pack(side=LEFT, padx=10)
 
 photo2 = PhotoImage(file='Photos\pause.png')
-pauseButton = Button(window, image=photo2, command=pause_btn)
-pauseButton.pack()
+pauseButton = Button(mFrame, image=photo2, command=pause_btn)
+pauseButton.pack(side=LEFT, padx=10)
 
 
 vol_scale = Scale(window, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
 vol_scale.set(4)
 set_vol(4)
-vol_scale.pack()
+vol_scale.pack(pady=15)
 
 statusBar = Label(window, text="Welcome to My Music Player", relief=SUNKEN, anchor=W)
 statusBar.pack(side=BOTTOM, fill=X)
